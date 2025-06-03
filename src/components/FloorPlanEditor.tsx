@@ -23,15 +23,22 @@ export const FloorPlanEditor = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(image, 0, 0);
 
-    // draw completed polygons
     polygons.forEach((polygon) => {
       ctx.beginPath();
+
       polygon.points.forEach((point, index) => {
         if (index === 0) ctx.moveTo(point.x, point.y);
         else ctx.lineTo(point.x, point.y);
       });
-      ctx.closePath();
-      ctx.strokeStyle = "#ff0000";
+
+      ctx.closePath(); // замыкаем контур
+
+      // Заливка внутренней области
+      ctx.fillStyle = "rgba(0, 255, 0, 0.5)"; // полупрозрачный зелёный
+      ctx.fill();
+
+      // Обводка
+      ctx.strokeStyle = "rgba(249, 7, 7, 0.5)";
       ctx.lineWidth = 2;
       ctx.stroke();
     });
