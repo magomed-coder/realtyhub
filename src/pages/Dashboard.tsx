@@ -2,7 +2,7 @@
 import React from "react";
 
 import { useAuthStore } from "../context/authStore";
-import { FloorPlanEditor } from "../components/FloorPlanEditor";
+import { FloorPlanEditor } from "../components/FloorPlanEditor/FloorPlanEditor";
 
 const Dashboard: React.FC = () => {
   const currentUser = useAuthStore((state) => state.currentUser);
