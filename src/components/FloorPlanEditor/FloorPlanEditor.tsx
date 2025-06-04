@@ -2,15 +2,9 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import { ApartmentControlPanel } from "./ApartmentControlPanel";
 import { UploadPlaceholder } from "./UploadPlaceholder";
 import { PolygonToolbar } from "./PolygonToolbar";
+import type { ApartmentStatus, Point, Polygon } from "../../types/editor";
+import { isPointInPolygon } from "../../lib/isPointInPolygon";
 
-export type Point = { x: number; y: number };
-export type ApartmentStatus = "available" | "reserved" | "sold";
-export type Polygon = {
-  id: string;
-  points: Point[];
-  number: string;
-  status: ApartmentStatus;
-};
 const COLORS = {
   available: {
     fill: "rgba(0, 252, 46, 0.7)",
@@ -59,32 +53,6 @@ export const FloorPlanEditor = () => {
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const numberInputRef = useRef<HTMLInputElement>(null);
-
-  // Проверка точки внутри полигона
-  const isPointInPolygon = (point: Point, polygon: Polygon) => {
-    const x = point.x;
-    const y = point.y;
-    let inside = false;
-
-    for (
-      let i = 0, j = polygon.points.length - 1;
-      i < polygon.points.length;
-      j = i++
-    ) {
-      const xi = polygon.points[i].x;
-      const yi = polygon.points[i].y;
-      const xj = polygon.points[j].x;
-      const yj = polygon.points[j].y;
-
-      const intersect =
-        yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
-
-      if (intersect) inside = !inside;
-    }
-
-    return inside;
-  };
 
   const drawCanvas = useCallback(() => {
     if (!image) return;
@@ -118,7 +86,7 @@ export const FloorPlanEditor = () => {
       }
 
       ctx.fill();
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 4;
       ctx.stroke();
 
       // Подпись номера квартиры
@@ -157,15 +125,15 @@ export const FloorPlanEditor = () => {
         ctx.lineTo(mousePosition.x, mousePosition.y);
       }
 
-      ctx.strokeStyle = "#00ff00";
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = "#f90303";
+      ctx.lineWidth = 4;
       ctx.stroke();
 
       // Рисуем точки текущего полигона
       currentPolygon.forEach((point) => {
         ctx.beginPath();
         ctx.arc(point.x, point.y, 5, 0, Math.PI * 2);
-        ctx.fillStyle = "#0000ff";
+        ctx.fillStyle = "#0c7ee8";
         ctx.fill();
       });
     }
@@ -194,29 +162,6 @@ export const FloorPlanEditor = () => {
   const handleMouseLeave = () => {
     setMousePosition(null);
   };
-
-  // Обработчик клавиш
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isDrawing) {
-        setCurrentPolygon([]);
-        setIsDrawing(false);
-        setMousePosition(null);
-      }
-
-      if (e.key === "Delete" && selectedPolygon) {
-        deletePolygon();
-      }
-
-      if (e.key === "Enter" && isEditing && selectedPolygon) {
-        updatePolygonNumber();
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDrawing, selectedPolygon, isEditing]);
 
   const handleCanvasClick = (e: React.MouseEvent) => {
     if (!image) return;
@@ -347,6 +292,29 @@ export const FloorPlanEditor = () => {
     setMousePosition(null);
   };
 
+  // Обработчик клавиш
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isDrawing) {
+        setCurrentPolygon([]);
+        setIsDrawing(false);
+        setMousePosition(null);
+      }
+
+      if (e.key === "Delete" && selectedPolygon) {
+        deletePolygon();
+      }
+
+      if (e.key === "Enter" && isEditing && selectedPolygon) {
+        updatePolygonNumber();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDrawing, selectedPolygon, isEditing]);
+
   return (
     <div className="flex flex-col items-center p-4 w-full max-w-6xl mx-auto">
       <input
@@ -360,7 +328,7 @@ export const FloorPlanEditor = () => {
       {image ? (
         <div className="flex flex-col lg:flex-row w-full gap-6">
           <div className="w-full lg:w-3/4">
-            <div className="border-2 border-amber-700 rounded-lg overflow-auto shadow-lg bg-gray-100">
+            <div className="border-2 rounded-lg overflow-auto shadow-lg bg-gray-100">
               <canvas
                 ref={canvasRef}
                 onClick={handleCanvasClick}
