@@ -1,20 +1,49 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
+import { ApartmentControlPanel } from "./ApartmentControlPanel";
+import { UploadPlaceholder } from "./UploadPlaceholder";
+import { PolygonToolbar } from "./PolygonToolbar";
 
-type Point = { x: number; y: number };
-type ApartmentStatus = "available" | "reserved" | "sold";
-type Polygon = {
+export type Point = { x: number; y: number };
+export type ApartmentStatus = "available" | "reserved" | "sold";
+export type Polygon = {
   id: string;
   points: Point[];
   number: string;
   status: ApartmentStatus;
 };
+const COLORS = {
+  available: {
+    fill: "rgba(0, 252, 46, 0.7)",
+    stroke: "rgba(0, 252, 46, 1)",
+  },
+  reserved: {
+    fill: "rgba(248, 162, 3, 0.7)",
+    stroke: "rgba(248, 162, 3, 1)",
+  },
+  sold: {
+    fill: "rgba(247, 3, 3, 0.7)",
+    stroke: "rgba(247, 3, 3, 1)",
+  },
+  selected: {
+    fill: "rgba(255, 255, 0, 0.3)",
+    stroke: "#ff9900",
+  },
+  numberText: {
+    default: "#131212",
+    selected: "#ff9900",
+  },
+  currentPolygon: {
+    line: "#00ff00",
+    pointFill: "#0000ff",
+  },
+};
 
 // Цвета статусов квартир
 const statusColors: Record<ApartmentStatus, { fill: string; stroke: string }> =
   {
-    available: { fill: "rgba(0, 255, 47, 0.3)", stroke: "#0000ff" },
-    reserved: { fill: "rgba(255, 165, 0, 0.3)", stroke: "#ff8c00" },
-    sold: { fill: "rgba(128, 128, 128, 0.3)", stroke: "#555555" },
+    available: COLORS.available,
+    reserved: COLORS.reserved,
+    sold: COLORS.sold,
   };
 
 export const FloorPlanEditor = () => {
@@ -107,7 +136,8 @@ export const FloorPlanEditor = () => {
         ctx.fillStyle =
           selectedPolygon && selectedPolygon.id === polygon.id
             ? "#ff9900"
-            : colors.stroke;
+            : // : colors.stroke;
+              "#131212";
         ctx.font = "bold 20px Arial";
         ctx.textAlign = "center";
         ctx.fillText(polygon.number, center.x, center.y + 5);
@@ -185,6 +215,7 @@ export const FloorPlanEditor = () => {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDrawing, selectedPolygon, isEditing]);
 
   const handleCanvasClick = (e: React.MouseEvent) => {
@@ -307,6 +338,15 @@ export const FloorPlanEditor = () => {
     }
   };
 
+  const clearAll = () => {
+    setPolygons([]);
+    setCurrentPolygon([]);
+    setIsDrawing(false);
+    setPolygonCounter(0);
+    setSelectedPolygon(null);
+    setMousePosition(null);
+  };
+
   return (
     <div className="flex flex-col items-center p-4 w-full max-w-6xl mx-auto">
       <input
@@ -316,12 +356,6 @@ export const FloorPlanEditor = () => {
         ref={fileInputRef}
         className="hidden"
       />
-      <button
-        onClick={() => fileInputRef.current?.click()}
-        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded mb-4"
-      >
-        Загрузить изображение
-      </button>
 
       {image ? (
         <div className="flex flex-col lg:flex-row w-full gap-6">
@@ -337,45 +371,12 @@ export const FloorPlanEditor = () => {
               />
             </div>
 
-            <div className="mt-4 flex flex-wrap gap-2">
-              <button
-                onClick={startNewPolygon}
-                disabled={isDrawing}
-                className={`px-4 py-2 rounded ${
-                  isDrawing
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-green-500 hover:bg-green-600 text-white"
-                }`}
-              >
-                Начать разметку
-              </button>
-
-              <button
-                onClick={finishCurrentPolygon}
-                disabled={!isDrawing}
-                className={`px-4 py-2 rounded ${
-                  !isDrawing
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-yellow-500 hover:bg-yellow-600 text-white"
-                }`}
-              >
-                Завершить полигон
-              </button>
-
-              <button
-                onClick={() => {
-                  setPolygons([]);
-                  setCurrentPolygon([]);
-                  setIsDrawing(false);
-                  setPolygonCounter(0);
-                  setSelectedPolygon(null);
-                  setMousePosition(null);
-                }}
-                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
-              >
-                Очистить всё
-              </button>
-            </div>
+            <PolygonToolbar
+              isDrawing={isDrawing}
+              startNewPolygon={startNewPolygon}
+              finishCurrentPolygon={finishCurrentPolygon}
+              clearAll={clearAll}
+            />
 
             <div className="mt-4 text-gray-600 text-center">
               <p>Квартир: {polygons.length}</p>
@@ -385,130 +386,24 @@ export const FloorPlanEditor = () => {
             </div>
           </div>
 
-          <div className="w-full lg:w-1/4 mt-6 lg:mt-0">
-            <div className="bg-white border rounded-lg shadow p-4 sticky top-4">
-              <h3 className="font-bold text-lg mb-4">Управление квартирами</h3>
-
-              <div className="mb-6">
-                <h4 className="font-semibold mb-2">Выбранная квартира:</h4>
-                {selectedPolygon ? (
-                  <div className="bg-yellow-50 rounded p-3">
-                    <div className="mb-3">
-                      <label className="block text-sm font-medium mb-1">
-                        Номер квартиры:
-                      </label>
-                      <div className="flex">
-                        <input
-                          type="text"
-                          value={editingNumber}
-                          onChange={(e) => {
-                            setEditingNumber(e.target.value);
-                            setIsEditing(true);
-                          }}
-                          ref={numberInputRef}
-                          className="border rounded-l px-2 py-1 w-full"
-                        />
-                        <button
-                          onClick={updatePolygonNumber}
-                          className="bg-blue-500 text-white px-3 rounded-r"
-                        >
-                          ✓
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="mb-3">
-                      <label className="block text-sm font-medium mb-1">
-                        Статус квартиры:
-                      </label>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => updatePolygonStatus("available")}
-                          className={`flex-1 py-1 rounded ${
-                            selectedPolygon.status === "available"
-                              ? "bg-green-500 text-white"
-                              : "bg-green-100"
-                          }`}
-                        >
-                          Доступна
-                        </button>
-                        <button
-                          onClick={() => updatePolygonStatus("reserved")}
-                          className={`flex-1 py-1 rounded ${
-                            selectedPolygon.status === "reserved"
-                              ? "bg-orange-500 text-white"
-                              : "bg-orange-100"
-                          }`}
-                        >
-                          Забронирована
-                        </button>
-                        <button
-                          onClick={() => updatePolygonStatus("sold")}
-                          className={`flex-1 py-1 rounded ${
-                            selectedPolygon.status === "sold"
-                              ? "bg-gray-500 text-white"
-                              : "bg-gray-100"
-                          }`}
-                        >
-                          Продана
-                        </button>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={deletePolygon}
-                      className="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded"
-                    >
-                      Удалить квартиру
-                    </button>
-                  </div>
-                ) : (
-                  <p className="text-gray-500 text-center py-3 bg-gray-50 rounded">
-                    Выберите квартиру на плане
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <h4 className="font-semibold mb-2">Все квартиры:</h4>
-                <div className="max-h-60 overflow-y-auto">
-                  {polygons.length > 0 ? (
-                    polygons.map((polygon) => {
-                      const colors = statusColors[polygon.status];
-                      return (
-                        <div
-                          key={polygon.id}
-                          onClick={() => selectPolygon(polygon.id)}
-                          className={`p-2 mb-2 rounded cursor-pointer flex items-center ${
-                            selectedPolygon?.id === polygon.id
-                              ? "bg-yellow-100 border border-yellow-300"
-                              : "hover:bg-gray-100"
-                          }`}
-                        >
-                          <div
-                            className="w-3 h-3 rounded-full mr-2"
-                            style={{ backgroundColor: colors.stroke }}
-                          ></div>
-                          <span>{polygon.number}</span>
-                        </div>
-                      );
-                    })
-                  ) : (
-                    <p className="text-gray-500 text-center py-4">
-                      Нет размеченных квартир
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
+          <ApartmentControlPanel
+            // currentFloorName={floors[currentFloor]?.name || ""}
+            currentFloorName={""}
+            polygons={polygons}
+            selectedPolygon={selectedPolygon}
+            editingNumber={editingNumber}
+            setEditingNumber={setEditingNumber}
+            updatePolygonNumber={updatePolygonNumber}
+            updatePolygonStatus={updatePolygonStatus}
+            deletePolygon={deletePolygon}
+            selectPolygon={selectPolygon}
+            statusColors={statusColors}
+          />
         </div>
       ) : (
-        <div className="w-full h-[50vh] flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg bg-gray-50">
-          <p className="mt-4 text-gray-500">
-            Загрузите изображение, чтобы начать работу
-          </p>
-        </div>
+        <UploadPlaceholder
+          onUploadClick={() => fileInputRef.current?.click()}
+        />
       )}
     </div>
   );

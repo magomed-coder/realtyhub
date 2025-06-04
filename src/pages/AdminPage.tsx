@@ -1,8 +1,9 @@
 // src/pages/AdminPage.tsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import LogoutButton from "../components/LogoutButton";
+
 import { useAuthStore } from "../context/authStore";
+import { LogoutButton } from "../components/LogoutButton";
 
 interface SimpleUser {
   id: string;
@@ -17,24 +18,24 @@ const AdminPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await axios.get<SimpleUser[]>(
-          `http://localhost:4000/api/users`
-        );
-        setUsers(response.data);
-      } catch (err) {
-        console.error("Ошибка при получении списка пользователей:", err);
-        setError("Не удалось загрузить список пользователей");
-      }
-      setLoading(false);
-    };
+  // useEffect(() => {
+  //   const fetchUsers = async () => {
+  //     setLoading(true);
+  //     setError(null);
+  //     try {
+  //       const response = await axios.get<SimpleUser[]>(
+  //         `http://localhost:4000/api/users`
+  //       );
+  //       setUsers(response.data);
+  //     } catch (err) {
+  //       console.error("Ошибка при получении списка пользователей:", err);
+  //       setError("Не удалось загрузить список пользователей");
+  //     }
+  //     setLoading(false);
+  //   };
 
-    fetchUsers();
-  }, []);
+  //   fetchUsers();
+  // }, []);
 
   if (!currentUser) {
     // Защиту по-сути берёт на себя AdminRoute, но на всякий случай:
