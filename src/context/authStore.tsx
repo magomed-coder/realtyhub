@@ -1,9 +1,5 @@
 import axios, { AxiosError } from "axios";
-import type {
-  AuthLoginResponse,
-  AuthResponse,
-  AuthState,
-} from "../../types/auth";
+import type { AuthLoginResponse, AuthResponse, AuthState } from "../types/auth";
 import { create } from "zustand";
 import { tokenService } from "../services/tokenService";
 import api from "../lib/api";

@@ -14,10 +14,10 @@ const Dashboard: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-amber-600 p-8">
-      <div className=" mx-auto bg-white p-6 rounded-2xl shadow">
-        <FloorPlanEditor />
-      </div>
+    <div className="min-h-screen bg-gray-50 p-8">
+      {/* <div className=" mx-auto bg-white p-6 rounded-2xl shadow"> */}
+      <FloorPlanEditor />
+      {/* </div> */}
     </div>
   );
 };
