@@ -63,7 +63,7 @@ const SignUp: React.FC = () => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* <Input
+            <Input
               id="name"
               label="Имя (необязательно)"
               type="text"
@@ -71,7 +71,7 @@ const SignUp: React.FC = () => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               // icon={<UserIcon className="h-5 w-5" />}
-            /> */}
+            />
 
             <Input
               id="email"

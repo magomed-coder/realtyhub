@@ -10,7 +10,7 @@ export const LayersIcon: React.FC<IconProps> = (props) => (
     width={props.width || 24}
     height={props.height || 24}
     viewBox="0 0 32 32"
-    enable-background="new 0 0 32 32"
+    enableBackground="new 0 0 32 32"
     stroke="currentColor"
     // xml:space="preserve"
     // xmlns:xlink="http://www.w3.org/1999/xlink"

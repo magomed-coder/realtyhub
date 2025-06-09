@@ -5,13 +5,11 @@ import { tokenService } from "../services/tokenService";
 import api from "../lib/api";
 import { API_ENDPOINTS } from "../constants/system";
 
-const tokenFromStorage = await tokenService.getAccessToken();
-
 export const useAuthStore = create<AuthState>((set, get) => ({
   // --- Начальное состояние ---
   currentUser: null,
-  token: tokenFromStorage,
-  isLoading: Boolean(tokenFromStorage), // если токен был, предположим, что идёт fetchMe
+  token: null,
+  isLoading: true, // если токен был, предположим, что идёт fetchMe
   error: null,
 
   // --- Экшены ---
@@ -30,7 +28,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       const response = await api.get<AuthResponse>(API_ENDPOINTS.USER_INFO);
 
-      const { username: fetchedUser } = response.data;
+      const fetchedUser = response.data;
       set({ currentUser: fetchedUser, isLoading: false });
     } catch (e) {
       // Если 401 или другая ошибка — считаем, что сессия недействительна
@@ -80,12 +78,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         name,
       });
 
-      const { username } = response.data;
+      const fetchedUser = response.data;
 
       // localStorage.setItem("token", token);
       // axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-      set({ currentUser: username, isLoading: false });
+      set({ currentUser: fetchedUser, isLoading: false });
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
       let message = "Не удалось зарегистрироваться";

@@ -1,22 +1,21 @@
 // src/pages/AdminPage.tsx
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React from "react";
 
 import { useAuthStore } from "../context/authStore";
 import { LogoutButton } from "../components/LogoutButton";
 
-interface SimpleUser {
-  id: string;
-  email: string;
-  role: string;
-  name?: string;
-}
+// interface SimpleUser {
+//   id: string;
+//   email: string;
+//   role: string;
+//   name?: string;
+// }
 
 const AdminPage: React.FC = () => {
   const currentUser = useAuthStore((state) => state.currentUser);
-  const [users, setUsers] = useState<SimpleUser[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  // const [users, setUsers] = useState<SimpleUser[]>([]);
+  // const [loading, setLoading] = useState<boolean>(true);
+  // const [error, setError] = useState<string | null>(null);
 
   // useEffect(() => {
   //   const fetchUsers = async () => {
@@ -42,21 +41,21 @@ const AdminPage: React.FC = () => {
     return <div>Доступ запрещён</div>;
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex justify-center items-center">
-        Загрузка списка пользователей...
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="min-h-screen flex justify-center items-center">
+  //       Загрузка списка пользователей...
+  //     </div>
+  //   );
+  // }
 
-  if (error) {
-    return (
-      <div className="min-h-screen flex justify-center items-center text-red-600">
-        {error}
-      </div>
-    );
-  }
+  // if (error) {
+  //   return (
+  //     <div className="min-h-screen flex justify-center items-center text-red-600">
+  //       {error}
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -78,7 +77,7 @@ const AdminPage: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {users.map((u) => (
+            {/* {users.map((u) => (
               <tr key={u.id}>
                 <td className="border border-gray-200 px-4 py-2">{u.id}</td>
                 <td className="border border-gray-200 px-4 py-2">{u.email}</td>
@@ -87,7 +86,7 @@ const AdminPage: React.FC = () => {
                 </td>
                 <td className="border border-gray-200 px-4 py-2">{u.role}</td>
               </tr>
-            ))}
+            ))} */}
           </tbody>
         </table>
 

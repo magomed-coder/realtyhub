@@ -8,8 +8,8 @@ export interface User {
   role: string; // "user" или "admin"
 }
 
-export interface AuthResponse {
-  username: string;
+export interface AuthResponse extends User {
+  mock?: string;
 }
 
 export interface AuthLoginResponse {

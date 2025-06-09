@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useAuthStore } from "../context/authStore";
 import { NavLink, useLocation } from "react-router-dom";
 
@@ -10,7 +9,7 @@ import { LayersIcon } from "../assets/icons/LayersIcon";
 
 export const Sidebar = () => {
   // 1. Убрано состояние darkMode
-  const [close, setClose] = useState(false);
+  // const [close, setClose] = useState(false);
 
   const location = useLocation();
   const currentUser = useAuthStore((state) => state.currentUser);
@@ -33,10 +32,11 @@ export const Sidebar = () => {
 
   return (
     <nav
+      // ${close ? "w-24" : "w-64"}
       className={`     
        px-3 py-5 h-[100vh]       
-        transition-all duration-300
-        ${close ? "w-24" : "w-64"} 
+        transition-all duration-300     
+        w-64 
         bg-white               
       `}
     >
@@ -81,8 +81,7 @@ export const Sidebar = () => {
                   {/* Текст пункта меню: скрывается, когда close=true */}
                   <span
                     className={`
-                    whitespace-nowrap transition-opacity
-                    ${close ? "opacity-0 w-0" : "opacity-100"}                
+                    whitespace-nowrap transition-opacity opacity-100                          
                     group-hover:text-white
                      ${
                        location.pathname === i.path

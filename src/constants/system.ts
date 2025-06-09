@@ -1,11 +1,11 @@
-export enum API_ENDPOINTS {
-  LOGIN = "/api/token/",
-  REFRESH_TOKEN = "/api/token/refresh/",
-  USER_INFO = "/api/me/",
+export const API_ENDPOINTS = {
+  LOGIN: "/api/token/",
+  REFRESH_TOKEN: "/api/token/refresh/",
+  USER_INFO: "/api/me/",
 
   //TODO:
-  REGISTER = "/api/register/",
-}
+  REGISTER: "/api/register/",
+};
 
 export const STORAGE_KEYS = {
   ACCESS_TOKEN: "access_token",
