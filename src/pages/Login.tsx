@@ -2,6 +2,9 @@
 import React, { useState, type FormEvent } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuthStore } from "../context/authStore";
+import { Input } from "../components/ui/Input";
+import { Button } from "../components/ui/Button";
+// import { EnvelopeIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 
 const Login: React.FC = () => {
   const login = useAuthStore((state) => state.login);
@@ -22,9 +25,6 @@ const Login: React.FC = () => {
     e.preventDefault();
     setFormError(null);
 
-    setFormError(null);
-    setFormError(null); // сбрасываем прошлую локальную ошибку
-
     if (!username || !password) {
       setFormError("Введите email и пароль");
       return;
@@ -32,59 +32,75 @@ const Login: React.FC = () => {
 
     try {
       await login(username, password);
-      // После успешного login Zustand обновил currentUser и token.
       navigate(fromPath, { replace: true });
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Ошибка входа:", err);
-      // Сообщение ошибки уже в store.error
-      // Локальная formError нужна лишь для валидации на клиенте
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-lg">
-        <h2 className="text-2xl font-semibold text-center mb-6">Вход</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg overflow-hidden">
+        <div className="bg-[#009257] py-4">
+          <h2 className="font-semibold text-center text-white">
+            Вход в систему
+          </h2>
+        </div>
 
-        {/* Отображаем сначала formError (локальную), а потом error из store */}
-        {(formError || error) && (
-          <div className="mb-4 text-red-600 text-sm">{formError || error}</div>
-        )}
+        <div className="p-8">
+          {(formError || error) && (
+            <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-100">
+              {formError || error}
+            </div>
+          )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="email"
-            placeholder="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <Input
+              id="username"
+              label="Email"
+              type="email"
+              placeholder="Введите ваш email"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              // icon={<EnvelopeIcon className="h-5 w-5" />}
+              error={!!(formError || error)}
+            />
 
-          <input
-            type="password"
-            placeholder="Пароль"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+            <Input
+              id="password"
+              label="Пароль"
+              type="password"
+              placeholder="Введите ваш пароль"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              // icon={<LockClosedIcon className="h-5 w-5" />}
+              error={!!(formError || error)}
+            />
 
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full py-3 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition disabled:opacity-50"
-          >
-            {isLoading ? "Входим..." : "Войти"}
-          </button>
-        </form>
+            <Button
+              type="submit"
+              variant="primary"
+              fullWidth
+              isLoading={isLoading}
+            >
+              Войти
+            </Button>
+          </form>
 
-        <p className="mt-4 text-center text-gray-600">
-          Нет аккаунта?{" "}
-          <Link to="/signup" className="text-blue-600 hover:underline">
-            Зарегистрироваться
-          </Link>
-        </p>
+          <div className="mt-6 pt-6 border-t border-gray-200">
+            <p className="text-center text-gray-600">
+              Нет аккаунта?{" "}
+              <Link
+                to="/signup"
+                className="text-[#009257] font-medium hover:underline"
+              >
+                Зарегистрироваться
+              </Link>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
