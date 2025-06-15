@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import { FiShare2, FiCopy, FiCheck } from "react-icons/fi";
 import { FaWhatsapp, FaTelegram, FaInstagram } from "react-icons/fa";
-
+import { Helmet } from "react-helmet";
 import { useAuthStore } from "../context/authStore";
 import { mockReports } from "../data/reports";
 
@@ -37,89 +37,104 @@ const ReportDetail: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow overflow-hidden">
-        <img
-          src={report.photoUrl}
-          alt={report.title}
-          className="w-full h-64 object-cover"
+    <>
+      <Helmet>
+        <title>{report.title} | Отчеты</title>
+        <meta property="og:type" content="article" />
+        <meta property="og:title" content={report.title} />
+        <meta
+          property="og:description"
+          content={`${report.rooms}-комн., ${report.area}м², ${report.address}`}
         />
-        <div className="p-6">
-          <h1 className="text-2xl font-bold mb-4">{report.title}</h1>
-          <p className="mb-2">Комнат: {report.rooms}</p>
-          <p className="mb-2">Площадь: {report.area} м²</p>
-          <p className="mb-2">Этаж: {report.floor}</p>
-          <p className="mb-2">Адрес: {report.address}</p>
+        <meta property="og:image" content={report.photoUrl} />
+        <meta property="og:url" content={pageUrl} />
+      </Helmet>
 
-          <div className="mt-4 bg-gray-100 rounded-xl p-4 flex justify-between">
-            <span className="font-medium">Цена за м²</span>
-            <span className="font-semibold">
-              {report.pricePerSqm.toLocaleString("ru-RU")} ₽/м²
-            </span>
-          </div>
+      <div className="min-h-screen bg-gray-50 p-8">
+        <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow overflow-hidden">
+          <img
+            src={report.photoUrl}
+            alt={report.title}
+            className="w-full h-64 object-cover"
+          />
+          <div className="p-6">
+            <h1 className="text-2xl font-bold mb-4">{report.title}</h1>
+            <p className="mb-2">Комнат: {report.rooms}</p>
+            <p className="mb-2">Площадь: {report.area} м²</p>
+            <p className="mb-2">Этаж: {report.floor}</p>
+            <p className="mb-2">Адрес: {report.address}</p>
 
-          {/* Блок для расшаривания */}
-          <div className="mt-6 pt-4 border-t border-gray-200">
-            <div className="flex items-center justify-between">
-              <h3 className="font-medium text-lg flex items-center">
-                <FiShare2 className="mr-2" />
-                Поделиться отчетом
-              </h3>
-
-              <div className="flex space-x-3">
-                {/* WhatsApp */}
-                <a
-                  href={socialLinks.whatsapp}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-green-100 text-green-700 p-2 rounded-full hover:bg-green-200 transition"
-                  aria-label="Поделиться в WhatsApp"
-                >
-                  <FaWhatsapp size={20} />
-                </a>
-
-                {/* Telegram */}
-                <a
-                  href={socialLinks.telegram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-blue-100 text-blue-700 p-2 rounded-full hover:bg-blue-200 transition"
-                  aria-label="Поделиться в Telegram"
-                >
-                  <FaTelegram size={20} />
-                </a>
-
-                {/* Instagram */}
-                <a
-                  href={socialLinks.instagram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-2 rounded-full hover:opacity-90 transition"
-                  aria-label="Поделиться в Instagram"
-                >
-                  <FaInstagram size={20} />
-                </a>
-
-                {/* Копировать ссылку */}
-                <button
-                  onClick={handleCopyLink}
-                  className="bg-gray-100 text-gray-700 p-2 rounded-full hover:bg-gray-200 transition"
-                  aria-label="Копировать ссылку"
-                >
-                  {copied ? <FiCheck size={20} /> : <FiCopy size={20} />}
-                </button>
-              </div>
+            <div className="mt-4 bg-gray-100 rounded-xl p-4 flex justify-between">
+              <span className="font-medium">Цена за м²</span>
+              <span className="font-semibold">
+                {report.pricePerSqm.toLocaleString("ru-RU")} ₽/м²
+              </span>
             </div>
 
-            {copied && (
-              <p className="mt-3 text-green-600 text-sm flex items-center">
-                <FiCheck className="mr-1" /> Ссылка скопирована в буфер обмена!
-              </p>
-            )}
+            {/* Блок для расшаривания */}
+            <div className="mt-6 pt-4 border-t border-gray-200">
+              <div className="flex items-center justify-between">
+                <h3 className="font-medium text-lg flex items-center">
+                  <FiShare2 className="mr-2" />
+                  Поделиться отчетом
+                </h3>
+
+                <div className="flex space-x-3">
+                  {/* WhatsApp */}
+                  <a
+                    href={socialLinks.whatsapp}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-green-100 text-green-700 p-2 rounded-full hover:bg-green-200 transition"
+                    aria-label="Поделиться в WhatsApp"
+                  >
+                    <FaWhatsapp size={20} />
+                  </a>
+
+                  {/* Telegram */}
+                  <a
+                    href={socialLinks.telegram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-blue-100 text-blue-700 p-2 rounded-full hover:bg-blue-200 transition"
+                    aria-label="Поделиться в Telegram"
+                  >
+                    <FaTelegram size={20} />
+                  </a>
+
+                  {/* Instagram */}
+                  <a
+                    href={socialLinks.instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-2 rounded-full hover:opacity-90 transition"
+                    aria-label="Поделиться в Instagram"
+                  >
+                    <FaInstagram size={20} />
+                  </a>
+
+                  {/* Копировать ссылку */}
+                  <button
+                    onClick={handleCopyLink}
+                    className="bg-gray-100 text-gray-700 p-2 rounded-full hover:bg-gray-200 transition"
+                    aria-label="Копировать ссылку"
+                  >
+                    {copied ? <FiCheck size={20} /> : <FiCopy size={20} />}
+                  </button>
+                </div>
+              </div>
+
+              {copied && (
+                <p className="mt-3 text-green-600 text-sm flex items-center">
+                  <FiCheck className="mr-1" /> Ссылка скопирована в буфер
+                  обмена!
+                </p>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
