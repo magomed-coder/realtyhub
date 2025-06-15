@@ -35,13 +35,13 @@ export const Sidebar = () => {
       // ${close ? "w-24" : "w-64"}
       className={`     
        px-3 py-5 h-[100vh]       
-        transition-all duration-300     
-        w-64 
-        bg-white               
+        transition-all duration-300            
+        bg-white
+        w-21 md:w-64                 
       `}
     >
       {/* САМ СПИСОК МЕНЮ + НИЖНИЙ БЛОК */}
-      <div className="flex flex-col justify-between h-full  overflow-y-auto no-scrollbar">
+      <div className="flex flex-col justify-between h-full overflow-y-auto no-scrollbar">
         {/* Секция с пунктами меню */}
         <div>
           <ul className="space-y-2">
@@ -83,6 +83,7 @@ export const Sidebar = () => {
                     className={`
                     whitespace-nowrap transition-opacity opacity-100                          
                     group-hover:text-white
+                    hidden md:block
                      ${
                        location.pathname === i.path
                          ? "text-white"
