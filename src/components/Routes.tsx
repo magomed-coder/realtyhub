@@ -8,6 +8,10 @@ import SignUp from "../pages/SignUp";
 import Login from "../pages/Login";
 import NotFoundPage from "../pages/NotFoundPage";
 import AdminPage from "../pages/AdminPage";
+import Profile from "../pages/Profile";
+import Settings from "../pages/Settings";
+import Reports from "../pages/Reports";
+import ReportDetail from "../pages/ReportDetail";
 
 // Обёртки
 import ProtectedRoute from "./ProtectedRoute";
@@ -16,9 +20,6 @@ import AdminRoute from "./AdminRoute";
 
 // Layout
 import MainLayout from "../layouts/MainLayout";
-import Profile from "../pages/Profile";
-import Settings from "../pages/Settings";
-import Reports from "../pages/Reports";
 
 const AppRoutes: React.FC = () => {
   return (
@@ -56,6 +57,7 @@ const AppRoutes: React.FC = () => {
         <Route path="profile" element={<Profile />} />
         <Route path="settings" element={<Settings />} />
         <Route path="reports" element={<Reports />} />
+        <Route path="reports/:id" element={<ReportDetail />} />
 
         {/* Админ-страница */}
         <Route
