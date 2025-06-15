@@ -46,7 +46,10 @@ const ReportDetail: React.FC = () => {
           property="og:description"
           content={`${report.rooms}-комн., ${report.area}м², ${report.address}`}
         />
-        <meta property="og:image" content={report.photoUrl} />
+        <meta
+          property="og:image"
+          content="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1AKF7LelsXtbK8YAYYdiPrDMZdFd74ZTgkQ&s"
+        />
         <meta property="og:url" content={pageUrl} />
       </Helmet>
 
